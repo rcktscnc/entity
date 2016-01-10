@@ -1,5 +1,6 @@
 #ifndef _STRIP_H
 #define _STRIP_H
+
 #include "Entity.h"
 
 namespace ett {
@@ -67,8 +68,8 @@ namespace ett {
 		sprite.setOrigin(properties.frame_width / 2, properties.frame_height / 2);
 		sprite.setPosition(owner->get_position());
 		sprite.setTextureRect(
-			sf::IntRect(frame_key * properties.frame_width,
-			properties.frame_line * properties.frame_height,
+			sf::IntRect((frame_key * properties.frame_width) + properties.sheet_offset_x,
+			(properties.frame_line * properties.frame_height) + properties.sheet_offset_x,
 			properties.frame_width,
 			properties.frame_height));
 
