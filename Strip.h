@@ -13,18 +13,15 @@ namespace ett {
 			frame_line, max_frames, frame_delay;
 
 		frame_properties() { }
-		frame_properties(int _frame_width, int _frame_height, 
-						 int _sheet_offset_x, int _sheet_offset_y, 
-						 int _frame_line, int _max_frames, 
-						 int _frame_delay):
+		frame_properties(int _frame_width, int _frame_height, int _sheet_offset_x,
+			int _sheet_offset_y, int _frame_line, int _max_frames,  int _frame_delay) :
 			frame_width(_frame_width),
 			frame_height(_frame_height),
 			sheet_offset_x(_sheet_offset_x),
 			sheet_offset_y(_sheet_offset_y),
 			frame_line(_frame_line),
 			frame_delay(_frame_delay),
-			max_frames(_max_frames)
-		{ }
+			max_frames(_max_frames) { }
 	};
 	
 	class Strip {
@@ -65,7 +62,7 @@ namespace ett {
 	}
 
 	bool Strip::draw(anim_properties ap) {
-		sprite.setOrigin(properties.frame_width / 2, properties.frame_height / 2);
+		sprite.setOrigin((float)properties.frame_width / 2, (float)properties.frame_height / 2);
 		sprite.setPosition(owner->get_position());
 		sprite.setTextureRect(
 			sf::IntRect((frame_key * properties.frame_width) + properties.sheet_offset_x,

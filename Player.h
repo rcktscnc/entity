@@ -25,9 +25,9 @@ namespace ett {
 		void jump();
 	};
 	Player::Player(sf::RenderWindow& window)
-		: Character(sf::Vector2f(40, 70), sf::Vector2f(150, 0)), walk_speed(2.f) {
+			: Character(sf::Vector2f(40, 70), sf::Vector2f(150, 0)), walk_speed(2.f) {
 
-		Character::add_behavior(new Gravity(3.0, this));
+		Character::add_behavior(new Gravity(0.15f, 0.15f, 0.01f, 7.0f, this));
 		Character::add_behavior(new Control<Player>(sf::Keyboard::K, &Player::jump, this));
 
 		standingTexture.loadFromFile("Tim.png");
@@ -56,7 +56,8 @@ namespace ett {
 		//anim_up.draw();
 	}
 	void Player::move_left() {
-		Character::move(-walk_speed, 0);
+		if (Character::is_grounded())
+			Character::set_velocity(-walk_speed, Character::get_velocity().y);
 		running.draw(anim_properties::BACKWARD);
 	}
 	void Player::move_down() {
@@ -64,7 +65,8 @@ namespace ett {
 		//anim_down.draw();
 	}
 	void Player::move_right() {
-		Character::move(walk_speed, 0);
+		if (Character::is_grounded())
+			Character::set_velocity(walk_speed, Character::get_velocity().y);
 		running.draw();
 	}
 	void Player::stand(bool face_right) {
@@ -74,8 +76,10 @@ namespace ett {
 	}
 
 	void Player::jump() {
-		Character::set_position(Character::get_position().x,
-			Character::get_position().y - 10);
+		if (Character::is_grounded()) {
+			Character::set_velocity(Character::get_velocity().x , -6.0f);
+			std::cout << "SPACE!!@\n";
+		}
 	}
 }
 #endif // _Player_H

@@ -18,8 +18,7 @@ namespace ett {
 	};
 
 	template<typename T>
-	Control<T>::Control(sf::Keyboard::Key _key, void(T::*_func)(), T* _owner)
-	{
+	Control<T>::Control(sf::Keyboard::Key _key, void(T::*_func)(), T* _owner) {
 		func = _func;
 		key = _key;
 		owner = _owner;

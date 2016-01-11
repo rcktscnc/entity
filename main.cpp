@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "World.h"
 #include "Control.h"
+#include "TEST.h"
 
 int main(int argc, char** argv) {
 	sf::RenderWindow window(sf::VideoMode(ett::WORLD_WIDTH, ett::WORLD_HEIGHT),
@@ -10,12 +11,15 @@ int main(int argc, char** argv) {
 	int a = 0;
 	
 	sf::Clock frame_timer;
-	unsigned int update_delay = 10;
+	int update_delay = 10;
+
 	ett::World world;
 	ett::Character floor(sf::Vector2f(700, 50), sf::Vector2f(400, 550));
 	ett::Player pl(window), pl2(window);
+	ett::TEST test;
 
-	world.add_entity(&pl); world.add_entity(&pl2); world.add_entity(&floor);
+	world.add_entity(&pl); world.add_entity(&pl2); world.add_entity(&test);
+	world.add_entity(&floor);
 
 	bool face_right = true;
 
@@ -41,6 +45,7 @@ int main(int argc, char** argv) {
 
 		pl2.stand(true);
 		pl2.draw_shape(window);
+		test.draw_shape(window);
 		
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) { pl.move_up(); }
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) { pl.move_left(); face_right = false; }

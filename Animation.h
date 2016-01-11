@@ -3,6 +3,7 @@
 
 #include "Strip.h"
 #include <vector>
+
 namespace ett {
 	class Animation {
 	private:

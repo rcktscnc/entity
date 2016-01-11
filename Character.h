@@ -15,9 +15,14 @@ namespace ett {
 	private:
 		static int id_count;
 		int id;
+		bool is_on_ground;
 		sf::RectangleShape shape;
 		sf::Vector2f pos;
 		std::vector<std::unique_ptr<Behavior>> bhvrs;
+
+		sf::Vector2f velocity;
+		sf::Vector2f acceleration;
+
 	public:
 		Character(sf::Vector2f _shape, const sf::Vector2f& _pos);
 		int get_id() override;
@@ -28,19 +33,29 @@ namespace ett {
 		void move(float x, float y) override;
 		sf::RectangleShape& get_shape() override;
 		sf::Vector2f& get_position() override;
-		void set_position(int x, int y) override;
+		void set_position(float x, float y) override;
 		bool test_collision(Entity& _entity) override;
 		void draw_shape(sf::RenderWindow& window);
 		void set_shape_color(int r, int g, int b);
 		void add_behavior(Behavior* bhvr);
 		void process() override;
+		void set_grounded(bool ground) override;
+		bool is_grounded();
+		//void set_acceleration(float x, float y) override;
+		//sf::Vector2f& get_acceleration() override;
+		void set_velocity(float x, float y) override;
+		sf::Vector2f get_velocity() override;
+		//void add_velocity(float x, float y) override;
+		void process_force();
+
 	};
 
 	int Character::id_count = 0;
 
 	Character::Character(sf::Vector2f _shape, const sf::Vector2f& _pos)
-		: pos(_pos), shape(_shape) {
+			: pos(_pos), shape(_shape), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f) {
 		id = id_count++;
+		is_on_ground = false;
 		shape.setPosition(pos);
 		shape.setOrigin(shape.getSize().x / 2, shape.getSize().y / 2);
 		shape.setFillColor(sf::Color::Transparent);
@@ -64,9 +79,9 @@ namespace ett {
 		shape.setPosition(pos);
 	}
 
-	void Character::set_position(int x, int y) {
-		pos.x = (float)x;
-		pos.y = (float)y;
+	void Character::set_position(float x, float y) {
+		pos.x = x;
+		pos.y = y;
 		shape.setPosition(pos);
 	}
 
@@ -81,16 +96,34 @@ namespace ett {
 	void Character::add_behavior(Behavior* bhvr) { bhvrs.push_back(std::unique_ptr<Behavior>(bhvr)); }
 
 	void Character::process() {
+		//move(velocity.x, velocity.y);
 		for (auto& e : bhvrs) {
 			e->process();
 		}
 	}
-
+	
 	bool Character::test_collision(Entity& _entity) {
 		if (shape.getGlobalBounds().intersects(_entity.get_shape().getGlobalBounds()))
-			return &_entity;
+			return true;
 		else 
-			return nullptr;
+			return false;
+	}
+
+	void Character::set_grounded(bool ground) { is_on_ground = ground; }
+
+	bool Character::is_grounded() { return is_on_ground; }
+
+	void Character::set_velocity(float x, float y) {
+		velocity.x = x;
+		velocity.y = y;
+	}
+
+	sf::Vector2f Character::get_velocity() {
+		return velocity;
+	}
+
+	void Character::process_force() {
+		move(velocity.x, velocity.y);
 	}
 }
 #endif // _CHARACTER_H
