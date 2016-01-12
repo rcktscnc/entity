@@ -6,11 +6,6 @@
 #include <memory>
 
 namespace ett {
-
-	const int BODY_SCALE = 10;
-	const int WORLD_WIDTH = BODY_SCALE * 80;
-	const int WORLD_HEIGHT = BODY_SCALE * 60;
-
 	class Character : public Entity {
 	private:
 		static int id_count;
@@ -35,18 +30,16 @@ namespace ett {
 		sf::Vector2f& get_position() override;
 		void set_position(float x, float y) override;
 		bool test_collision(Entity& _entity) override;
-		void draw_shape(sf::RenderWindow& window);
+		void draw_shape(sf::RenderWindow& window) override;
 		void set_shape_color(int r, int g, int b);
 		void add_behavior(Behavior* bhvr);
 		void process() override;
 		void set_grounded(bool ground) override;
 		bool is_grounded();
-		//void set_acceleration(float x, float y) override;
-		//sf::Vector2f& get_acceleration() override;
 		void set_velocity(float x, float y) override;
 		sf::Vector2f get_velocity() override;
-		//void add_velocity(float x, float y) override;
 		void process_force();
+		void rotate_shape(float angle);
 
 	};
 
@@ -96,13 +89,13 @@ namespace ett {
 	void Character::add_behavior(Behavior* bhvr) { bhvrs.push_back(std::unique_ptr<Behavior>(bhvr)); }
 
 	void Character::process() {
-		//move(velocity.x, velocity.y);
 		for (auto& e : bhvrs) {
 			e->process();
 		}
 	}
 	
 	bool Character::test_collision(Entity& _entity) {
+		//if (shape.getGlobalBounds().intersects(_entity.get_shape().getGlobalBounds()))
 		if (shape.getGlobalBounds().intersects(_entity.get_shape().getGlobalBounds()))
 			return true;
 		else 
@@ -125,5 +118,7 @@ namespace ett {
 	void Character::process_force() {
 		move(velocity.x, velocity.y);
 	}
+
+	void Character::rotate_shape(float angle) { shape.rotate(angle); }
 }
 #endif // _CHARACTER_H

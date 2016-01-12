@@ -20,8 +20,11 @@ namespace ett {
 
 	Gravity::Gravity(float _gforce, float _friction, float _air_resistance, 
 		float _terminal_velocity, Entity* _owner)
-			: owner(_owner), gforce(_gforce), friction(_friction), 
-			air_resistence(_air_resistance), terminal_velocity(_terminal_velocity) { }
+		: owner(_owner), 
+		gforce(_gforce), 
+		friction(_friction), 
+		air_resistence(_air_resistance), 
+		terminal_velocity(_terminal_velocity) { }
 
 	void Gravity::process() {
 		sf::Vector2f velocity = owner->get_velocity();

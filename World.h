@@ -3,7 +3,6 @@
 
 #include "Entity.h"
 #include <vector>
-#include <iostream>
 
 namespace ett {
 	class World {
@@ -13,6 +12,7 @@ namespace ett {
 		void add_entity(Entity* _player);
 		void collision();
 		void process();
+		void process_debug(sf::RenderWindow& window);
 	};
 
 	void World::add_entity(Entity* _player) {
@@ -27,8 +27,6 @@ namespace ett {
 
 				bool collided = players[i]->test_collision(*players[j]);
 				if (collided == true) {
-					/*std::cout << "SHAPE " << players[i]->get_id() 
-						<< " COLLIDES WITH " << players[j]->get_id() << "\n";*/
 
 					float pixels_up = 0.0f;
 					float pixels_left = 0.0f;
@@ -66,23 +64,18 @@ namespace ett {
 							pixels_up < pixels_right) {
 						players[i]->set_position(old_position.x, old_position.y - pixels_up);
 						players[i]->set_grounded(true);
-						//std::cout << "UP\n";
 					} 
 					else if (pixels_left < pixels_up && pixels_left < pixels_down &&
 							pixels_left < pixels_right) {
 						players[i]->set_position(old_position.x - pixels_left, old_position.y);
-						//std::cout << "LEFT\n";
 					}
 					else if (pixels_down < pixels_up && pixels_down < pixels_left &&
 							pixels_down < pixels_right) {
 						players[i]->set_position(old_position.x, old_position.y + pixels_down);
-						
-						//std::cout << "DOWN\n";
 					}
 					else if (pixels_right < pixels_up && pixels_right < pixels_down &&
 							pixels_right < pixels_up) {
 						players[i]->set_position(old_position.x + pixels_right, old_position.y);
-						//std::cout << "RIGHT\n";
 					}
 				}
 			}
@@ -92,6 +85,15 @@ namespace ett {
 	void World::process() {
 		for (auto& e : players) e->process();
 		collision();
+	}
+
+	void World::process_debug(sf::RenderWindow& window) {
+		for (auto& e : players) {
+			e->process();
+			e->draw_shape(window);
+		}
+		collision();
+		
 	}
 
 }

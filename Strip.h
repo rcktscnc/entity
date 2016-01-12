@@ -14,8 +14,8 @@ namespace ett {
 
 		frame_properties() { }
 		frame_properties(int _frame_width, int _frame_height, int _sheet_offset_x,
-			int _sheet_offset_y, int _frame_line, int _max_frames,  int _frame_delay) :
-			frame_width(_frame_width),
+			int _sheet_offset_y, int _frame_line, int _max_frames,  int _frame_delay) 
+			: frame_width(_frame_width),
 			frame_height(_frame_height),
 			sheet_offset_x(_sheet_offset_x),
 			sheet_offset_y(_sheet_offset_y),
