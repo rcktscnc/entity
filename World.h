@@ -13,6 +13,7 @@ namespace ett {
 		void collision();
 		void process();
 		void process_debug(sf::RenderWindow& window);
+		void tick();
 	};
 
 	void World::add_entity(Entity* _player) {
@@ -24,15 +25,15 @@ namespace ett {
 		for (unsigned int i = 0; i < players.size(); i++) {
 			players[i]->set_grounded(false);
 			for (unsigned int j = i + 1; j < players.size(); j++) {
-
+				
 				bool collided = players[i]->test_collision(*players[j]);
 				if (collided == true) {
-
+					
 					float pixels_up = 0.0f;
 					float pixels_left = 0.0f;
 					float pixels_down = 0.0f;
 					float pixels_right = 0.0f;
-
+					
 					sf::Vector2f old_position = players[i]->get_position();
 
 					while (players[i]->test_collision(*players[j]) && pixels_up < 10) {
@@ -93,8 +94,10 @@ namespace ett {
 			e->draw_shape(window);
 		}
 		collision();
-		
 	}
 
+	void World::tick() {
+		for (auto& e : players) e->tick();
+	}
 }
 #endif

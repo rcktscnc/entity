@@ -4,6 +4,8 @@
 #include "Entity.h"
 #include "Behavior.h"
 #include <memory>
+#include <typeinfo>
+
 
 namespace ett {
 	class Character : public Entity {
@@ -14,7 +16,8 @@ namespace ett {
 		sf::RectangleShape shape;
 		sf::Vector2f pos;
 		std::vector<std::unique_ptr<Behavior>> bhvrs;
-
+		std::vector<unsigned int> collision_ignored;
+		unsigned int derived_hash;
 		sf::Vector2f velocity;
 		sf::Vector2f acceleration;
 
@@ -25,22 +28,30 @@ namespace ett {
 		void hide() override;
 		void spawn() override;
 		void destroy() override;
+		void process() override;
+		void tick() override;
 		void move(float x, float y) override;
 		sf::RectangleShape& get_shape() override;
 		sf::Vector2f& get_position() override;
 		void set_position(float x, float y) override;
 		bool test_collision(Entity& _entity) override;
 		void draw_shape(sf::RenderWindow& window) override;
-		void set_shape_color(int r, int g, int b);
-		void add_behavior(Behavior* bhvr);
-		void process() override;
 		void set_grounded(bool ground) override;
-		bool is_grounded();
 		void set_velocity(float x, float y) override;
 		sf::Vector2f get_velocity() override;
+		unsigned int get_derived_hash() override;
+		std::vector<unsigned int> get_collision_ignored() override;
+
+		void set_shape_color(int r, int g, int b);
+		void add_behavior(Behavior* bhvr);
+		bool is_grounded();
 		void process_force();
 		void rotate_shape(float angle);
-
+		template<typename Ignore>
+		void ignore_collision();
+		template<typename This>
+		void init_self();
+		
 	};
 
 	int Character::id_count = 0;
@@ -54,6 +65,7 @@ namespace ett {
 		shape.setFillColor(sf::Color::Transparent);
 		shape.setOutlineThickness(1.0f);
 		shape.setOutlineColor(sf::Color(255, 0, 0));
+		derived_hash = 0;
 	}
 
 	int Character::get_id() { return id; }
@@ -65,6 +77,8 @@ namespace ett {
 	void Character::spawn() { }
 
 	void Character::destroy() { }
+
+	void Character::tick() { }
 
 	void Character::move(float x, float y) { 
 		pos.x += x;
@@ -95,7 +109,15 @@ namespace ett {
 	}
 	
 	bool Character::test_collision(Entity& _entity) {
-		//if (shape.getGlobalBounds().intersects(_entity.get_shape().getGlobalBounds()))
+		unsigned int _derived_hash = _entity.get_derived_hash();
+		std::vector<unsigned int> ignored_list = _entity.get_collision_ignored();
+		for (auto e : collision_ignored) {
+			if (e == _derived_hash) return false;
+		}
+		for (auto e : ignored_list) {
+			if (e == derived_hash) return false;
+		}
+		
 		if (shape.getGlobalBounds().intersects(_entity.get_shape().getGlobalBounds()))
 			return true;
 		else 
@@ -120,5 +142,21 @@ namespace ett {
 	}
 
 	void Character::rotate_shape(float angle) { shape.rotate(angle); }
+
+	template<typename Ignore>
+	void Character::ignore_collision() {
+		collision_ignored.push_back(typeid(Ignore).hash_code());
+	}
+
+	std::vector<unsigned int> Character::get_collision_ignored() {
+		return collision_ignored;
+	}
+
+	template<typename This>
+	void Character::init_self() {
+		derived_hash = typeid(This).hash_code();
+	}
+
+	unsigned int Character::get_derived_hash() { return derived_hash; }
 }
 #endif // _CHARACTER_H

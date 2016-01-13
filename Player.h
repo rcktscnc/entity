@@ -24,11 +24,11 @@ namespace ett {
 		void stand_anim();
 		void jump();
 		void jump_anim();
-		void tick();
 	};
 
 	Player::Player(sf::RenderWindow& window)
-		: Character(sf::Vector2f(40, 70), sf::Vector2f(150, 0)), walk_speed(2.f), face_right(true) {
+		: Character(sf::Vector2f(35, 70), sf::Vector2f(350, 0)), walk_speed(2.f), face_right(true) {
+		Character::init_self<Player>();
 
 		Character::add_behavior(new Gravity(0.15f, 0.15f, 0.01f, 7.0f, this));
 		Character::add_behavior(new Control<Player>(sf::Keyboard::Space, &Player::jump, this));
@@ -90,7 +90,7 @@ namespace ett {
 	void Player::jump() {
 		if (Character::is_grounded()) {
 			jumping.draw();
-			Character::set_velocity(Character::get_velocity().x , -6.0f);
+			Character::set_velocity(Character::get_velocity().x , -10.0f);
 		}
 	}
 	void Player::jump_anim() {
